@@ -1,0 +1,23 @@
+services:
+  web:
+    build: .
+    container_name: paubarbarroja-web
+    networks:
+      - cf-edge
+    restart: unless-stopped
+
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    container_name: paubarbarroja-tunnel
+    restart: unless-stopped
+    command: tunnel run
+    environment:
+      - TUNNEL_TOKEN=${TUNNEL_TOKEN}
+    networks:
+      - cf-edge
+    depends_on:
+      - web
+
+networks:
+  cf-edge:
+    external: true
